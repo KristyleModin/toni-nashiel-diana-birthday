@@ -1,0 +1,225 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:300italic);
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: #252432;
+}
+
+#cake {
+  display: block;
+  position: relative;
+  margin: -10em auto 0 auto;
+}
+
+.candle {
+  background: #ffffff;
+  border-radius: 10px;
+  position: absolute;
+  top: 228px;
+  left: 50%;
+  margin-left: -2.4px;
+  margin-top: -8.33333333px;
+  width: 5px;
+  height: 35px;
+  transform: translateY(-300px);
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-animation: in 500ms 6s ease-out forwards;
+          animation: in 500ms 6s ease-out forwards;
+}
+
+.candle:after,
+.candle:before {
+  background: rgba(255, 0, 0, 0.4);
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2.22222222px;
+}
+
+.candle:after {
+  top: 25%;
+  left: 0;
+}
+
+.candle:before {
+  top: 45%;
+  left: 0;
+}
+
+.fire {
+  border-radius: 100%;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  margin-left: -2.6px;
+  width: 6.66666667px;
+  height: 18px;
+}
+
+.fire:nth-child(1) {
+  -webkit-animation: fire 2s 6.5s infinite;
+          animation: fire 2s 6.5s infinite;
+}
+
+.fire:nth-child(2) {
+  -webkit-animation: fire 1.5s 6.5s infinite;
+          animation: fire 1.5s 6.5s infinite;
+}
+
+.fire:nth-child(3) {
+  -webkit-animation: fire 1s 6.5s infinite;
+          animation: fire 1s 6.5s infinite;
+}
+
+.fire:nth-child(4) {
+  -webkit-animation: fire 0.5s 6.5s infinite;
+          animation: fire 0.5s 6.5s infinite;
+}
+
+.fire:nth-child(5) {
+  -webkit-animation: fire 0.2s 6.5s infinite;
+          animation: fire 0.2s 6.5s infinite;
+}
+
+@-webkit-keyframes fire {
+  0%, 100% {
+    background: rgba(254, 248, 97, 0.5);
+    box-shadow: 0 0 40px 10px rgba(248, 233, 209, 0.2);
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    background: rgba(255, 50, 0, 0.1);
+    box-shadow: 0 0 40px 20px rgba(248, 233, 209, 0.2);
+    transform: translateY(-20px) scale(0);
+  }
+}
+@keyframes fire {
+  0%, 100% {
+    background: rgba(254, 248, 97, 0.5);
+    box-shadow: 0 0 40px 10px rgba(248, 233, 209, 0.2);
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    background: rgba(255, 50, 0, 0.1);
+    box-shadow: 0 0 40px 20px rgba(248, 233, 209, 0.2);
+    transform: translateY(-20px) scale(0);
+  }
+}
+@-webkit-keyframes in {
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes in {
+  to {
+    transform: translateY(0);
+  }
+}
+.text {
+  color: #d1d1d1;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+  text-align: center;
+}
+.text h1 {
+  font-size: 1.4em;
+}
+
+/* Interactive UI styles */
+#start-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: rgba(0,0,0,0.45);
+  text-align: center;
+  padding: 1rem;
+  font-family: "Lato", sans-serif;
+  z-index: 60;
+  cursor: pointer;
+}
+
+.envelope {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 70;
+  background: #fff;
+  border-radius: 999px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-size: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 80;
+}
+.modal.open { display: flex; }
+.modal-content {
+  background: #fff;
+  color: #222;
+  max-width: 680px;
+  width: calc(100% - 40px);
+  padding: 18px;
+  border-radius: 12px;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+}
+.slideshow { display:flex; align-items:center; gap:8px; }
+.slides { flex:1; height:220px; background:#eee; border-radius:8px; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.slides img { width:100%; height:100%; object-fit:cover; }
+.slideshow button { background:transparent; border:none; font-size:30px; }
+.slides-note { font-size:12px; color:#666; margin-top:8px; }
+
+/* Candle extinguished state */
+.extinguished .fire { opacity: 0 !important; transform: translateY(-6px) scale(0.4) !important; box-shadow:none !important; }
+.extinguished .candle { opacity:0.9; }
+
+/* small smoke puff */
+.smoke {
+  position: absolute;
+  top: 190px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: rgba(200,200,200,0.5);
+  filter: blur(6px);
+  animation: smoke 2s ease-out forwards;
+  pointer-events:none;
+  z-index:40;
+}
+@keyframes smoke { to { transform: translateY(-80px) scale(2); opacity:0; } }
+
+/* Responsive tweaks */
+@media (max-width:520px) {
+  #cake { transform: scale(0.8); margin-top: -6em; }
+  .modal-content { padding:14px; }
+}
