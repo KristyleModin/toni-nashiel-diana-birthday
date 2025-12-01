@@ -151,54 +151,76 @@ document.addEventListener('DOMContentLoaded', function () {
   document.body.addEventListener('click', function startOnce() { startAll(); document.body.removeEventListener('click', startOnce); });
 
   // Modal + slideshow logic
+  // slidePaths: explicit list of images present in the assets folder
+  // (populated from repository assets so the slideshow loads what you added)
   const slidePaths = [
-    './assets/photo1.jpg', './assets/photo2.jpg', './assets/photo3.jpg',
-    './assets/photo4.jpg', './assets/photo5.jpg', './assets/photo6.jpg'
+    './assets/image1.jpg',
+    './assets/image2.jpg',
+    './assets/image3.jpeg',
+    './assets/image4.jpeg',
+    './assets/image5.jpeg',
+    './assets/image6.jpeg',
+    './assets/image7.jpeg',
+    './assets/image8.jpeg',
+    './assets/image9.jpeg',
+    './assets/image10.jpeg'
   ];
   let slides = [];
   let current = 0;
 
   function loadSlides() {
-    // try to load each image, add only loaded ones
-    let loaded = 0;
-    slidePaths.forEach((p, i) => {
+    // try to load each candidate path and keep only successful images
+    slides = [];
+    let processed = 0;
+    slidePaths.forEach((p) => {
       const img = new Image();
       img.src = p;
       img.onload = () => {
-        slides.push(p);
-        loaded++;
-        if (i === slidePaths.length-1) renderSlides();
+        if (!slides.includes(p)) slides.push(p);
+        processed++;
+        if (processed === slidePaths.length) renderSlides();
       };
       img.onerror = () => {
-        // ignore missing files
-        if (i === slidePaths.length-1) renderSlides();
+        processed++;
+        if (processed === slidePaths.length) renderSlides();
       };
     });
-    // safety render in 600ms if images don't call onload
-    setTimeout(renderSlides, 600);
+    // safety render in case onload/onerror callbacks take too long
+    setTimeout(renderSlides, 900);
   }
 
   function renderSlides() {
     slidesContainer.innerHTML = '';
     if (slides.length === 0) {
-      slidesContainer.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">No photos found.<br>Add <code>photo1.jpg</code>..<code>photo6.jpg</code> to <code>assets/</code></div>';
+      slidesContainer.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">No photos found.<br>Add images to <code>assets/</code></div>';
       return;
     }
-    slides.forEach((src, idx) => {
+    // limit to up to 3 images for a compact slideshow
+    const limited = slides.slice(0, 10);
+    slides = limited; // make slides reflect limited set for navigation
+    current = 0;
+    limited.forEach((src, idx) => {
       const img = document.createElement('img');
       img.src = src;
       img.dataset.index = idx;
-      img.style.display = (idx===current)?'block':'none';
+      img.style.display = (idx === current) ? 'block' : 'none';
+      img.style.cursor = 'pointer';
+      img.title = 'Tap image to go to next';
+      // tap image to advance slideshow
+      img.addEventListener('click', () => { showSlide(current+1); });
       slidesContainer.appendChild(img);
     });
   }
 
-  function showSlide(i) {
+  function showSlide(index) {
+    if (!slidesContainer) return;
     const imgs = slidesContainer.querySelectorAll('img');
-    if (imgs.length===0) return;
-    if (i < 0) i = imgs.length-1; if (i >= imgs.length) i = 0;
-    current = i;
-    imgs.forEach((im, idx) => im.style.display = (idx===current)?'block':'none');
+    if (imgs.length === 0) return;
+    const len = imgs.length;
+    if (index < 0) index = len - 1;
+    if (index >= len) index = 0;
+    current = index;
+    imgs.forEach((im, idx) => im.style.display = (idx === current) ? 'block' : 'none');
   }
 
   nextBtn.addEventListener('click', ()=> { showSlide(current+1); });
@@ -206,10 +228,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
   openLetter.addEventListener('click', ()=>{
     modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
-    loadSlides();
+    // show Letter tab by default
+    activateModalTab('letter');
+      // Open modal and show BOTH panels (letter left + images right)
+      const letterPanel = document.getElementById('modal-letter');
+      const imagesPanel = document.getElementById('modal-images');
+      if (letterPanel) { letterPanel.style.display = 'block'; letterPanel.setAttribute('aria-hidden','false'); }
+      if (imagesPanel) { imagesPanel.style.display = 'block'; imagesPanel.setAttribute('aria-hidden','false'); }
+      // load slides immediately so thumbnails appear on the right
+      loadSlides();
   });
   modalClose.addEventListener('click', ()=>{ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
   modal.addEventListener('click', (e)=>{ if (e.target === modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); } });
+
+  // modal tab switching (Letter | Images)
+  const modalTabs = document.querySelectorAll('.modal-tabs .tab');
+  function activateModalTab(name) {
+    modalTabs.forEach(b => {
+      const t = b.dataset.tab;
+      const letterPanel = document.getElementById('modal-letter');
+      const imagesPanel = document.getElementById('modal-images');
+      if (t === name) {
+        b.classList.add('active');
+        b.setAttribute('aria-selected','true');
+        if (t === 'letter') { letterPanel.style.display = 'block'; letterPanel.setAttribute('aria-hidden','false'); imagesPanel.style.display = 'none'; imagesPanel.setAttribute('aria-hidden','true'); }
+        else { imagesPanel.style.display = 'block'; imagesPanel.setAttribute('aria-hidden','false'); letterPanel.style.display = 'none'; letterPanel.setAttribute('aria-hidden','true'); loadSlides(); }
+      } else {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected','false');
+      }
+    });
+  }
+  modalTabs.forEach(b => b.addEventListener('click', () => activateModalTab(b.dataset.tab)));
 
   // Basic swipe support for slides
   let touchStartX = 0;
